@@ -12,9 +12,14 @@ struct ContentView: View {
         /* NOTE: the .shuffled() method at the end of the
          array will randomize the array everytime */
     @State private var correctAnswer = Int.random(in: 0...2)
+    @State private var score: Int = 0
     
     @State private var showingScore = false
     @State private var scoreTitle = ""
+    @State private var scoreMessage = ""
+    
+    @State private var questionCount = 0
+    @State private var showNewGame = false
     
     var body: some View {
         ZStack {
@@ -59,7 +64,7 @@ struct ContentView: View {
                 Spacer()
                 Spacer()
                 
-                Text("Score: ???")
+                Text("Score: \(score)")
                     .font(.title)
                     .foregroundStyle(.white)
                 
@@ -70,7 +75,13 @@ struct ContentView: View {
         .alert(scoreTitle, isPresented: $showingScore) {
             Button("Continue", action: askQuestion)
         } message: {
-            Text("Your score is ???")
+            Text("\(scoreTitle == "Wrong" ? scoreMessage : "Great Job!") \nYour score is \(score)")
+            //Text("Your score is \(score)")
+        }
+        .alert("Game Over", isPresented: $showNewGame) {
+            Button("Restart", action: resetGame)
+        } message: {
+            Text("Your Final Score is: \(score)!")
         }
     }
     
@@ -78,18 +89,41 @@ struct ContentView: View {
     func flagTapped(_ number: Int) {
         if number == correctAnswer {
             scoreTitle = "Correct"
+            score += 1
         } else {
             scoreTitle = "Wrong"
+            scoreMessage = "That's the flag of \(countries[number])"
+            if score > 0 {
+                score -= 1
+            }
         }
         
-        // this will trigger the alert
-        showingScore = true
+        // increase the question count
+        questionCount += 1
+        
+        if questionCount < 8 {
+            // show the alert that continues the game
+            showingScore = true
+        } else {
+            // show the final alert
+            showNewGame = true
+        }
     }
     
     // method to be called when user presses 'continue'
     func askQuestion() {
         countries.shuffle()
         correctAnswer = Int.random(in: 0...2)
+    }
+    
+    // method to reset the game
+    func resetGame() {
+        countries.shuffle()
+        correctAnswer = Int.random(in: 0...2)
+        
+        // reset the question count & score
+        questionCount = 0
+        score = 0
     }
 }
 

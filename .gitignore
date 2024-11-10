@@ -1,7 +1,60 @@
-# Ignore all .DS_Store files
-*.DS_Store
+# User-specific Xcode files
+*.xcuserdatad/
+*.xcscmblueprint
 
-# Ignore XCode user specific data
-*.xcuserstate
-*.xcuserdatad
+# User interface state, breakpoints, debugging information, and scheme management
+*.xccheckout
+*.xcdebugger/
+*.xcscheme
+*.xcsettings
+
+# Xcode workspace settings
+*.xcworkspace
+
+# Derived data directory (contains build products and other derived files)
+DerivedData/
+
+# Archive files created during the build process
+*.xcarchive
+
+# Build artifacts and intermediate build files
+build/
+
+# Personal scheme files
 xcuserdata/
+
+# Playground files (if you have Swift playgrounds)
+timeline.xctimeline
+playground.xcworkspace
+
+# Swift Package Manager files
+.swiftpm/
+Package.resolved
+
+# CocoaPods files (if you’re using CocoaPods for dependency management)
+Pods/
+Podfile.lock
+
+# Carthage files (if you’re using Carthage for dependency management)
+Carthage/Build/
+Carthage/Checkouts/
+
+# Fastlane files (if you’re using Fastlane for automation)
+fastlane/report.xml
+fastlane/Preview.html
+fastlane/screenshots/*.png
+fastlane/test_output/
+
+# Bundle for App Store submission logs
+*.ipa
+*.dSYM.zip
+*.app.dSYM
+*.bcsymbolmap
+*.dSYM
+
+# macOS DS_Store files
+.DS_Store
+
+# Editor-specific files
+.idea/
+.vscode/

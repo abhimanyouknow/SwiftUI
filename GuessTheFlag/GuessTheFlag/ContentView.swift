@@ -7,6 +7,22 @@
 
 import SwiftUI
 
+// project 3 - challenge 2
+// custom view used for view composition
+struct AddImage: View {
+    var country: String
+    
+    init(of country: String) {
+        self.country = country
+    }
+    
+    var body: some View {
+        Image(country)
+            .clipShape(.capsule)
+            .shadow(radius: 5)
+    }
+}
+
 struct ContentView: View {
     @State private var countries = ["Estonia", "France", "Germany", "Ireland", "Italy", "Nigeria", "Poland", "Spain", "UK", "Ukraine", "US"].shuffled()
         /* NOTE: the .shuffled() method at the end of the
@@ -50,9 +66,15 @@ struct ContentView: View {
                         Button {
                             flagTapped(number)
                         } label: {
-                            Image(countries[number])
-                                .clipShape(.capsule)
-                                .shadow(radius: 5)
+//                            Image(countries[number])
+//                                .clipShape(.capsule)
+//                                .shadow(radius: 5)
+                            AddImage(of: countries[number]) // project 3 - challenge 2
+                                /* NOTE: using view
+                                 composition by calling newly
+                                 defined custom view which
+                                 applies modifiers to each
+                                 input */
                         }
                     }
                 }

@@ -14,6 +14,9 @@ struct ContentView: View {
     @State private var sleepAmount = 8.0
     @State private var coffeeAmount = 1
     
+    /* NOTE: because they don't reference a specific instance,
+     we can reference static properties inside initializers
+     for regular properties */
     // computed property for default wake time to be 7AM
     static var defaultWakeTime: Date {
         var components = DateComponents()
@@ -22,19 +25,18 @@ struct ContentView: View {
         return Calendar.current.date(from: components) ?? .now
     }
     
-    // properties for alert which shows result
-    @State private var showingAlert = false
-    @State private var alertTitle = ""
-    @State private var alertMessage = ""
+    // removing these properties as part of challenge 3
+//    // properties for alert which shows result
+//    @State private var showingAlert = false
+//    @State private var alertTitle = ""
+//    @State private var alertMessage = ""
     
     var body: some View {
         NavigationStack {
             Form {
-                VStack(alignment: .leading, spacing: 0) {
-                    // user input for wake up time
-                    Text("When do you want to wake up?")
-                        .font(.headline)
-                    
+                // challenge 1: changing VStack to Section
+                // user input for desired wake up time
+                Section("When do you want to wake up?") {
                     DatePicker("Please select a time", selection: $wakeUp, displayedComponents: .hourAndMinute)
                         .labelsHidden()
                 }
@@ -47,35 +49,53 @@ struct ContentView: View {
                     Stepper("\(sleepAmount.formatted()) hours", value: $sleepAmount, in: 4...12, step: 0.25)
                 }
                 
-                VStack(alignment: .leading, spacing: 0) {
-                    // user input for coffee consumption quantity
-                    Text("Daily coffee intake")
-                        .font(.headline)
-                    
-                    Stepper("^[\(coffeeAmount) cup](inflect: true)", value: $coffeeAmount, in: 1...20)
-                    /* NOTE: ^[](inflect: true) is a special
-                     syntax derived from markdown. here, it
-                     tells SwiftUI that the word 'cup' needs
-                     to be inflected (pluralised) based on the
-                     value of the 'coffeeAmount' variable
-                     value */
+                // removing VStack as part of challenge 2
+//                VStack(alignment: .leading, spacing: 0) {
+//                    // user input for coffee consumption quantity
+//                    Text("Daily coffee intake")
+//                        .font(.headline)
+//                    
+//                    Stepper("^[\(coffeeAmount) cup](inflect: true)", value: $coffeeAmount, in: 1...20)
+//                    /* NOTE: ^[](inflect: true) is a special
+//                     syntax derived from markdown. here, it
+//                     tells SwiftUI that the word 'cup' needs
+//                     to be inflected (pluralised) based on the
+//                     value of the 'coffeeAmount' variable
+//                     value */
+                
+                // challenge 2: replacing stepper with picker
+                Picker("Daily coffee intake", selection: $coffeeAmount) {
+                    ForEach(1..<21) {
+                        Text("\($0)")
+                    }
+                }
+                //}
+                
+                /* challenge 3: displaying recommended wake up
+                 time always - removing calculate button */
+                Section("Your ideal sleep time is") {
+                    Text(calculateBedtime())
+                        .font(.largeTitle)
                 }
             }
             .navigationTitle("BetterRest")
+            // removing this as part of challenge 3
             // adding calculate button in the toolbar up top
-            .toolbar {
-                Button("Calculate", action: calculateBedtime)
-            }
-            .alert(alertTitle, isPresented: $showingAlert) {
-                Button("Ok") { }
-            } message: {
-                Text(alertMessage)
-            }
+//            .toolbar {
+//                Button("Calculate", action: calculateBedtime)
+//            }
+//            .alert(alertTitle, isPresented: $showingAlert) {
+//                Button("Ok") { }
+//            } message: {
+//                Text(alertMessage)
+//            }
         }
     }
     
     // method to calculate bed time based on user inputs
-    func calculateBedtime() {
+    // altering method as part of challenge 2 and 3
+    func calculateBedtime() -> String {
+        var result = ""
         /* using CoreML could throw errors, hence we'll use a
          do-try-catch block */
         do {
@@ -95,7 +115,14 @@ struct ContentView: View {
             /* getting the prediction value from user inputs,
              which is essentially how much sleep the user
              actually needs */
-            let prediction = try model.prediction(wake: Double(hours + minutes), estimatedSleep: sleepAmount, coffee: Double(coffeeAmount))
+            //let prediction = try model.prediction(wake: Double(hours + minutes), estimatedSleep: sleepAmount, coffee: Double(coffeeAmount))
+            let prediction = try model.prediction(wake: Double(hours + minutes), estimatedSleep: sleepAmount, coffee: Double(coffeeAmount + 1))
+                /* NOTE: as part of challenge 2, we changed the
+                 coffee intake to be a picker instead of a
+                 stepper. since the binded value in the picker
+                 refers to the index, we are adding 1 to
+                 the binded value to get the number of coffee
+                 cups consumed per day */
             
             /* but this value will be in seconds. we have to
              convert it to something meaningful. thanks to
@@ -103,16 +130,21 @@ struct ContentView: View {
              type */
             let sleepTime = wakeUp - prediction.actualSleep
             
-            alertTitle = "Your ideal sleep time is..."
-            alertMessage = sleepTime.formatted(date: .omitted, time: .shortened)
+//            alertTitle = "Your ideal sleep time is..."
+//            alertMessage = sleepTime.formatted(date: .omitted, time: .shortened)
+            
+            result = sleepTime.formatted(date: .omitted, time: .shortened)
         } catch {
-            alertTitle = "Error"
-            alertMessage = "Sorry! There was a problem calculating your bedtime"
+//            alertTitle = "Error"
+//            alertMessage = "Sorry! There was a problem calculating your bedtime"
+            result = "Oops! There was an error."
         }
         
         /* regardless of whether the predcition worked or not,
          we'll show the alert */
-        showingAlert = true
+        //showingAlert = true
+        
+        return result
     }
 }
 

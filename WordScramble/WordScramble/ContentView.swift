@@ -8,67 +8,173 @@
 import SwiftUI
 
 struct ContentView: View {
+    @State private var usedWords = [String]()
+    @State private var rootWord = ""
+    @State private var newWord = ""
+    
+    // properties for alert
+    @State private var alertTitle = ""
+    @State private var alertMessage = ""
+    @State private var showingErrorAlert = false
+    
     var body: some View {
-        Text("Hello, world!")
+        NavigationStack {
+            List {
+                Section {
+                    TextField("Enter your word", text: $newWord)
+                        .textInputAutocapitalization(.never)
+                }
+                
+                Section {
+                    ForEach(usedWords, id: \.self) { word in
+                        HStack {
+                            /* displaying how many letters in
+                             current word */
+                            Image(systemName: "\(word.count).circle")
+                            Text(word)
+                        }
+                    }
+                }
+            }
+            .navigationTitle(rootWord)
+            .onSubmit(addNewWord)
+                /* invokes the specified method whenever user
+                 presses the return key */
+            .onAppear(perform: startGame)
+                /* invokes the specified function whenever this
+                 view is loaded */
+            .alert(alertTitle, isPresented: $showingErrorAlert) { } message: {
+                Text(alertMessage)
+                /* note how we haven't added code for an empty
+                 OK button before the message. if we don't
+                 specify any button, SwiftUI automaticallty
+                 assigns an OK button for us */
+            }
+        }
     }
     
-    func testStrings() {
-        let input = "a b c"
-        let letters = input.components(separatedBy: " ")
+    /* function to add new word to the list whenver the user
+     hits the 'return' key */
+    func addNewWord() {
+        // lowercase string & remove any white spaces
+        let answer = newWord.lowercased().trimmingCharacters(in: .whitespacesAndNewlines)
         
-        let input2 = """
-        a
-        b
-        c
-        """
-        let letters2 = input.components(separatedBy: "\n")
+        // ensuring there is at least one letter
+        guard answer.count > 0 else { return }
         
-        // getting a random value from the array
-        let randomLetter = letters2.randomElement() ?? "a"
-            /* NOTE: .randomElement() returns an optional
-             string element since it does not know whether the
-             string is empty or not, hence the nil coalescing
-             (alternatively, we can also simply try to unwrap
-             the string using if let) */
+        // calling input validation method 1
+        guard isOriginal(word: answer) else {
+            wordError(title: "Word used already", message: "Be more original!")
+            return
+        }
         
-        let trimmed = randomLetter.trimmingCharacters(in: .whitespacesAndNewlines)
-            /* removing whitespaces and new lines from a
-             string */
+        // calling input validation method 2
+        guard isPossible(word: answer) else {
+            wordError(title: "Word not possible", message: "You can't spell that word from '\(rootWord)'!")
+            return
+        }
+        
+        // calling input validation method 3
+        guard isReal(word: answer) else {
+            wordError(title: "Word not recognized", message: "You can't just make them up!")
+            return
+        }
+        
+        withAnimation {
+            /* adding the new word to the usedWords array with
+             animation. typically with arrays, we use the
+             .append() modifier, but here we will use the
+             .insert modifier so that we can add the new words
+             at the 0th index, i.e., at the top */
+            usedWords.insert(answer, at: 0)
+        }
+        
+        // emptying the newWord property
+        newWord = ""
     }
     
-    // function for checking misspelled words
-    func checkSpelling() {
-        // step 1: make a word to check
-        let word = "swift"
+    /* function which will load the start.txt file from the
+     bundle into our app, or call fatalError() if something goes
+     wrong */
+    func startGame() {
+        // step 1: fiding url for start.txt inside the bundle
+        if let startWordsURL = Bundle.main.url(forResource: "start", withExtension: "txt") {
+            // step 2: loading the file into a string
+            if let startWords = try? String.init(contentsOf: startWordsURL) {
+                /* at this stage, the entire file is loaded into
+                 a single string, startWords. we want to split
+                 this string into an array, containing all the
+                 words which are separated by new lines */
+                let allWords = startWords.components(separatedBy: "\n")
+                
+                /* now, we pick a random word from this array
+                 and assign it to the rootWord property */
+                rootWord = allWords.randomElement() ?? "silkworm"
+                    /* we're using nil coalescing because
+                     .randomElements() returns an optinal value,
+                     even though we know that at this stage we
+                     will get a value */
+                
+                /* if we've made it this far, then everything
+                 worked correctly. we can exit the start method
+                 */
+                return
+            }
+        }
         
-        // step 2: make an instance of UITextChecker
+        // if the code reaches here - there was an error
+        fatalError("Could not load start.txt from bundle.")
+    }
+    
+    // input validation method 1 - checking duplicates
+    func isOriginal(word: String) -> Bool {
+        !usedWords.contains(word)
+    }
+    
+    /* input validation method 2 - ensuring the input word is
+     made from the same letters as the root word */
+    func isPossible(word: String) -> Bool {
+        var tempWord = rootWord /* temp variable so that the
+                                 original rootWord is unaffected
+                                 */
+        
+        // looping over each letter of the input word
+        for letter in word {
+            /* determining the position in the temp word where
+             the letter of the input word lies*/
+            if let pos = tempWord.firstIndex(of: letter) {
+                /* removing the matching letter from the temp
+                 word */
+                tempWord.remove(at: pos)
+            } else {
+                /* if any letter in the input word is not found anywhere in the temp word, return false */
+                return false
+            }
+        }
+        
+        /* if we've reached here, that means we've gone through
+         all the letters of the input word and they all are
+         contained in the temp word, which corresponds to the
+         root word */
+        return true
+    }
+    
+    /* input validation method 3 - checking if the input word is
+     a valid english word */
+    func isReal(word: String) -> Bool {
         let checker = UITextChecker()
-        
-        /* step 3: we want to tell the instance of
-         UITextChecker how much of our string we want to
-         check */
         let range = NSRange(location: 0, length: word.utf16.count)
-            /* utf16 is the character encoding - we use this
-             here so that objective C can understand how swfit
-             strings are stored */
-        
-        /* step 4: telling our text checker to report where it
-         found any misspelled words in our string - passing in
-            - the string to check
-            - the range to check
-            - the position to start from within the range
-            - whether it should wrap around to the beginning again
-            - which language it should use for the dictionary
-         
-         this sends back another objective C string range,
-         telling us where the misspelled word was found
-         */
         let misspelledRange = checker.rangeOfMisspelledWord(in: word, range: range, startingAt: 0, wrap: false, language: "en")
         
-        /* step 5: checking if there were any misspelled words
-         - if there were no misspelled words, we get back a
-         special value "NSNotFound" */
-        let allGood = misspelledRange.location == NSNotFound
+        return misspelledRange.location == NSNotFound
+    }
+    
+    /* input validation method 4 - setting alert title and
+     message based on the error and displaying the alert */
+    func wordError(title: String, message: String) {
+        alertTitle = title
+        alertMessage = message
+        showingErrorAlert = true
     }
 }
 

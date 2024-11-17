@@ -17,12 +17,21 @@ struct ContentView: View {
     @State private var alertMessage = ""
     @State private var showingErrorAlert = false
     
+    // challenge 3
+    @State private var score: Double = 0
+    
     var body: some View {
         NavigationStack {
             List {
                 Section {
                     TextField("Enter your word", text: $newWord)
                         .textInputAutocapitalization(.never)
+                }
+                
+                // challenge 3
+                Section {
+                    Text("Your Score: \(score.formatted())")
+                        .font(.headline)
                 }
                 
                 Section {
@@ -50,6 +59,16 @@ struct ContentView: View {
                  specify any button, SwiftUI automaticallty
                  assigns an OK button for us */
             }
+            // challenge 2
+            .toolbar {
+                Button(action: startGame) {
+                    Text("New Game")
+                        .foregroundStyle(.white)
+                        .padding(10)
+                        .background(Color.blue)
+                        .clipShape(RoundedRectangle(cornerRadius: 10))
+                }
+            }
         }
     }
     
@@ -61,6 +80,18 @@ struct ContentView: View {
         
         // ensuring there is at least one letter
         guard answer.count > 0 else { return }
+        
+        // challenge 1 - part 1
+        guard minimumLettersCheck(word: answer) else {
+            wordError(title: "Too few letters", message: "Your guess word must have at least three letters!")
+            return
+        }
+        
+        // challenge 1 - part 2
+        guard answer != rootWord else {
+            wordError(title: "Same as '\(rootWord)'", message: "You cannot enter '\(rootWord)', try something else.")
+            return
+        }
         
         // calling input validation method 1
         guard isOriginal(word: answer) else {
@@ -79,6 +110,9 @@ struct ContentView: View {
             wordError(title: "Word not recognized", message: "You can't just make them up!")
             return
         }
+        
+        // challenge 3
+        score += calculateScore(word: answer)
         
         withAnimation {
             /* adding the new word to the usedWords array with
@@ -114,6 +148,12 @@ struct ContentView: View {
                      .randomElements() returns an optinal value,
                      even though we know that at this stage we
                      will get a value */
+                
+                // challenge 3
+                // reset the score
+                score = 0
+                // reset the usedWords array
+                usedWords.removeAll()
                 
                 /* if we've made it this far, then everything
                  worked correctly. we can exit the start method
@@ -175,6 +215,17 @@ struct ContentView: View {
         alertTitle = title
         alertMessage = message
         showingErrorAlert = true
+    }
+    
+    // challenge 1
+    func minimumLettersCheck(word: String) -> Bool {
+        !(word.count < 3)
+    }
+    
+    // challenge 3
+    // method for calculating score based on # of letter of input
+    func calculateScore(word: String) -> Double {
+        (Double(word.count) / 8) * 10
     }
 }
 

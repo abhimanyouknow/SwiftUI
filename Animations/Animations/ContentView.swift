@@ -8,37 +8,30 @@
 import SwiftUI
 
 struct ContentView: View {
-    // step 1: we need a state to store the amout of drag
+    let letters = Array("Hello SwiftUI")
+    
+    @State private var enabled = false
     @State private var dragAmount = CGSize.zero
-    //@State private var dragAmount = Angle.zero
     
     var body: some View {
-        LinearGradient(colors: [.yellow, .red], startPoint: .topLeading, endPoint: .bottomTrailing)
-            .frame(width: 300, height: 200)
-            .clipShape(.rect(cornerRadius: 10))
-            .offset(dragAmount)
-                /* step 2: we need to use dragAmount to
-                 influence the position of the card on the
-                 screen -> for this we use the .offset()
-                 modifier */
-            .gesture(
-                DragGesture()
-                    .onChanged { dragAmount = $0.translation }
-                    .onEnded { _ in
-                        withAnimation {
-                            dragAmount = .zero
-                        }
-                    }
-            )
-                /* step 3: create a drag gesture object and
-                 attach it to the card */
-            
-        
-//            .gesture(
-//                RotateGesture()
-//                    .onChanged { dragAmount = $0.rotation }
-//                    .onEnded { _ in dragAmount = .zero }
-//            )
+        HStack(spacing: 0) {
+            ForEach(0..<letters.count, id: \.self) { num in
+                Text(String(letters[num]))
+                    .padding(5)
+                    .font(.title)
+                    .background(enabled ? .blue : .red)
+                    .offset(dragAmount)
+                    .animation(.linear.delay(Double(num) / 20), value: dragAmount)
+            }
+        }
+        .gesture(
+            DragGesture()
+                .onChanged { dragAmount = $0.translation }
+                .onEnded { _ in
+                    dragAmount = .zero
+                    enabled.toggle()
+                }
+        )
     }
 }
 

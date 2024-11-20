@@ -37,6 +37,11 @@ struct ContentView: View {
     @State private var questionCount = 0
     @State private var showNewGame = false
     
+    // project 6 - challenge 1, 2, 3 - part 1
+    @State private var rotationAmount = [0.0, 0.0, 0.0]
+    @State private var opacityAmount = [1.0, 1.0, 1.0]
+    @State private var scaleAmount = [1.0, 1.0, 1.0]
+    
     var body: some View {
         ZStack {
             RadialGradient(stops: [
@@ -66,9 +71,6 @@ struct ContentView: View {
                         Button {
                             flagTapped(number)
                         } label: {
-//                            Image(countries[number])
-//                                .clipShape(.capsule)
-//                                .shadow(radius: 5)
                             AddImage(of: countries[number]) // project 3 - challenge 2
                                 /* NOTE: using view
                                  composition by calling newly
@@ -76,6 +78,15 @@ struct ContentView: View {
                                  applies modifiers to each
                                  input */
                         }
+                        // project 6 - challenge 1 - part 2
+                        .rotation3DEffect(.degrees(rotationAmount[number]), axis: (x: 0, y: 1, z: 0))
+                        
+                        // project 6 - challenge 2 - part 2
+                        .opacity(opacityAmount[number])
+                        
+                        // project 6 - challenge 3 - part 3
+                        .scaleEffect(scaleAmount[number])
+                        .animation(.default, value: scaleAmount[number])
                     }
                 }
                 .frame(maxWidth: .infinity)
@@ -98,7 +109,6 @@ struct ContentView: View {
             Button("Continue", action: askQuestion)
         } message: {
             Text("\(scoreTitle == "Wrong" ? scoreMessage : "Great Job!") \nYour score is \(score)")
-            //Text("Your score is \(score)")
         }
         .alert("Game Over", isPresented: $showNewGame) {
             Button("Restart", action: resetGame)
@@ -112,6 +122,12 @@ struct ContentView: View {
         if number == correctAnswer {
             scoreTitle = "Correct"
             score += 1
+            
+            // project 6 - challenge 1 - part 3
+            // only rotate the correct flag
+            withAnimation(.spring(duration: 1, bounce: 0.5)) {
+                rotationAmount[number] += 180
+            }
         } else {
             scoreTitle = "Wrong"
             scoreMessage = "That's the flag of \(countries[number])"
@@ -130,12 +146,32 @@ struct ContentView: View {
             // show the final alert
             showNewGame = true
         }
+        
+        // project 6 - challenge 2, 3 - part 3
+        withAnimation {
+            for i in 0..<opacityAmount.count {
+                // decreasing opacity of other flags
+                opacityAmount[i] = i == number ? 1.0 : 0.25
+                
+                // decreasing scale of other flags
+                scaleAmount[i] = i == number ? 1.0 : 0.75
+            }
+        }
     }
     
     // method to be called when user presses 'continue'
     func askQuestion() {
         countries.shuffle()
         correctAnswer = Int.random(in: 0...2)
+        
+        // project 6 - challenge 2, 3 - part 4
+        withAnimation {
+            // resetting the opacity of all the flags
+            opacityAmount = [1.0, 1.0, 1.0]
+            
+            // resetting scale of all flags
+            scaleAmount = [1.0, 1.0, 1.0]
+        }
     }
     
     // method to reset the game

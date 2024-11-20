@@ -7,24 +7,6 @@
 
 import SwiftUI
 
-//struct ContentView: View {
-//    // step 1: we need a state to store the amout of drag
-//    //@State private var dragAmount = CGSize.zero
-//    @State private var rotationAmount = Angle.zero
-//    
-//    var body: some View {
-//        LinearGradient(colors: [.yellow, .red], startPoint: .topLeading, endPoint: .bottomTrailing)
-//            .frame(width: 300, height: 200)
-//            .clipShape(.rect(cornerRadius: 10))
-//            .rotationEffect(rotationAmount)
-//            .gesture(
-//                RotateGesture()
-//                    .onChanged { rotationAmount = $0.rotation }
-//                    .onEnded { _ in rotationAmount = .zero }
-//            )
-//    }
-//}
-
 struct ContentView: View {
     @State private var rotationX = 0.0
     @State private var rotationY = 0.0

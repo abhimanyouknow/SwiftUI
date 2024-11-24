@@ -16,8 +16,11 @@ struct ExpenseItem: Identifiable, Codable {
      Int or even a UUID
      
      As a result of this, we don't have to specify the id
-     parameter in the ForEach loop below */
-    var id = UUID() // this generated a new unique id for each instance
+     parameter in the ForEach loop below
+     
+     Codable protocol is used for archiving & un-archiving data -
+     this is useful when storing complex data using UserDefaults */
+    var id = UUID() // this generates a new unique id for each instance
     let name: String
     let type: String
     let amount: Double
@@ -27,6 +30,8 @@ struct ExpenseItem: Identifiable, Codable {
 class Expenses {
     var items = [ExpenseItem]() {
         didSet {
+            /* encoding the array of ExpenseItems and storing
+             the data with UserDefaults */
             if let encoded = try? JSONEncoder().encode(items) {
                 UserDefaults.standard.set(encoded, forKey: "Items")
             }
@@ -46,14 +51,24 @@ class Expenses {
             }
         }
         
+        /* setting items to a blank array if unable to un-archive
+         and decode data from UserDefaults */
         items = []
     }
 }
 
 struct ContentView: View {
     @State private var expenses = Expenses()
+        /* expenses is an instance of the Class Expenses. we're
+         using a class so that we can use the data of this
+         instance across views. to ensure that we keep a track of
+         any changes to any properties within the class as opposed
+         to this instance, we've used @Observable above the class
+         definition */
     
     @State private var showingAddExpenses = false
+        /* state property for tracking when to show/ hide the
+         second view */
     
     var body: some View {
         NavigationStack {
@@ -81,14 +96,16 @@ struct ContentView: View {
                 }
             }
             .sheet(isPresented: $showingAddExpenses) {
-                AddView(expenses: expenses) /* sharing the same
-                                             observable object
-                                             class between the
-                                             two views */
+                AddView(expenses: expenses)
+                    /* showing the second view, while also sharing
+                     the same observable object class between the
+                     two views */
             }
         }
     }
     
+    
+    // method to delete items from the list
     func removeItems(at offset: IndexSet) {
         expenses.items.remove(atOffsets: offset)
     }

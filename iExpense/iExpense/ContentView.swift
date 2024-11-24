@@ -75,16 +75,25 @@ struct ContentView: View {
             List {
                 ForEach(expenses.items) { item in
                     HStack {
-                        VStack {
+                        VStack(alignment: .leading) {
                             Text(item.name)
                                 .font(.headline)
                             
                             Text(item.type)
+                                .italic()
+                                .font(.caption)
                         }
                         
                         Spacer()
                         
                         Text(item.amount, format: .currency(code: Locale.current.currency?.identifier ?? "USD"))
+                            /* challenge 1 - part 1: using user's
+                             default currency preference instead
+                             of USD */
+                        
+                            /* challenge 2 : styling the amount
+                             based on the different slabs */
+                            .foregroundStyle(item.amount < 10.0 ? .green : item.amount < 100.0 ? .blue : .red)
                     }
                 }
                 .onDelete(perform: removeItems)

@@ -37,6 +37,9 @@ struct AddView: View {
                 
                 TextField("Amount", value: $amount, format: .currency(code: Locale.current.currency?.identifier ?? "USD"))
                     .keyboardType(.decimalPad)
+                        /* challenge 1 - part 1: using user's
+                         default currency preference instead
+                         of USD */
             }
             .navigationTitle("Add new expense")
             .toolbar {

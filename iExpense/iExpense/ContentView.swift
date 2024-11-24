@@ -57,6 +57,17 @@ class Expenses {
     }
 }
 
+// challenge 3 - part 1
+extension Expenses {
+    var personalItems: [ExpenseItem] {
+        items.filter { $0.type == "Personal" }
+    }
+    
+    var businessItems: [ExpenseItem] {
+        items.filter { $0.type == "Business" }
+    }
+}
+
 struct ContentView: View {
     @State private var expenses = Expenses()
         /* expenses is an instance of the Class Expenses. we're
@@ -72,32 +83,67 @@ struct ContentView: View {
     
     var body: some View {
         NavigationStack {
-            List {
-                ForEach(expenses.items) { item in
-                    HStack {
-                        VStack(alignment: .leading) {
-                            Text(item.name)
-                                .font(.headline)
-                            
-                            Text(item.type)
-                                .italic()
-                                .font(.caption)
+            // challenge 3 - separate lists for Personal & Business
+            VStack(alignment: .leading, spacing: 20) {
+                // fisrt list for personal expenses
+                VStack(alignment: .leading) {
+                    Text("Personal")
+                        .font(.title2)
+                        .bold()
+                        .padding(.bottom, 5)
+                    
+                    List {
+                        ForEach(expenses.personalItems) { item in
+                            HStack {
+                                Text(item.name)
+                                    .font(.headline)
+                                
+                                Spacer()
+                                
+                                Text(item.amount, format:
+                                    // challenge 1
+                                    .currency(code: Locale.current.currency?.identifier ?? "USD"))
+                                    // challenge 2
+                                    .foregroundStyle(item.amount < 10.0 ? .green : item.amount < 100.0 ? .blue : .red)
+                            }
                         }
-                        
-                        Spacer()
-                        
-                        Text(item.amount, format: .currency(code: Locale.current.currency?.identifier ?? "USD"))
-                            /* challenge 1 - part 1: using user's
-                             default currency preference instead
-                             of USD */
-                        
-                            /* challenge 2 : styling the amount
-                             based on the different slabs */
-                            .foregroundStyle(item.amount < 10.0 ? .green : item.amount < 100.0 ? .blue : .red)
+                        .onDelete { indexSet in
+                            removeItems(at: indexSet, from: "Personal")
+                        }
                     }
+                    .listStyle(.inset)
                 }
-                .onDelete(perform: removeItems)
+                
+                // second list for business expenses
+                VStack(alignment: .leading) {
+                    Text("Business")
+                        .font(.title2)
+                        .bold()
+                        .padding(.bottom, 5)
+                    
+                    List {
+                        ForEach(expenses.businessItems) { item in
+                            if item.type == "Business" {
+                                HStack {
+                                    Text(item.name)
+                                        .font(.headline)
+                                    
+                                    Spacer()
+                                    
+                                    Text(item.amount, format: .currency(code: Locale.current.currency?.identifier ?? "USD"))
+                                        .foregroundStyle(item.amount < 10.0 ? .green : item.amount < 100.0 ? .blue : .red)
+                                }
+                            }
+                        }
+                        // challenge 3 - part 3
+                        .onDelete { indexSet in
+                            removeItems(at: indexSet, from: "Business")
+                        }
+                    }
+                    .listStyle(.inset)
+                }
             }
+            .padding()
             .navigationTitle("iExpense")
             .toolbar {
                 Button("Add Expense", systemImage: "plus") {
@@ -106,17 +152,32 @@ struct ContentView: View {
             }
             .sheet(isPresented: $showingAddExpenses) {
                 AddView(expenses: expenses)
-                    /* showing the second view, while also sharing
-                     the same observable object class between the
-                     two views */
+                /* showing the second view, while also sharing
+                 the same observable object class between the
+                 two views */
             }
         }
     }
     
     
     // method to delete items from the list
-    func removeItems(at offset: IndexSet) {
-        expenses.items.remove(atOffsets: offset)
+    // challenge 3 - part 2
+    func removeItems(at offsets: IndexSet, from type: String) {
+        let filteredItems: [ExpenseItem]
+        
+        // determine which filtered list to use
+        if type == "Personal" {
+            filteredItems = expenses.personalItems
+        } else {
+            filteredItems = expenses.businessItems
+        }
+        
+        // find the corresponding items in the original array
+        for offset in offsets {
+            if let index = expenses.items.firstIndex(where: { $0.id == filteredItems[offset].id }) {
+                expenses.items.remove(at: index)
+            }
+        }
     }
 }
 

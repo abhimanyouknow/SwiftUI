@@ -8,6 +8,9 @@
 import SwiftUI
 
 struct ContentView: View {
+    // challenge 3 - part 1
+    @State private var toggleListView = false
+    
     let astronauts: [String: Astronaut] = Bundle.main.decode("astronauts.json")
         /* calling the extension method created in
          Bundle-Decodable.swift
@@ -25,45 +28,90 @@ struct ContentView: View {
     
     var body: some View {
         NavigationStack {
-            ScrollView {
-                LazyVGrid(columns: columns) {
-                    ForEach(missions) { mission in
-                        NavigationLink {
-                            MissionView(mission: mission, astronauts: astronauts)
-                        } label: {
-                            VStack {
-                                Image(mission.image)
-                                    .resizable()
-                                    .scaledToFit()
-                                    .frame(width: 100, height: 100)
-                                    .padding()
-                                
-                                VStack {
-                                    Text(mission.displayName)
-                                        .font(.headline)
-                                        .foregroundStyle(.white)
+            // challenge 3 - part 2
+            Group {
+                if toggleListView {
+                    List {
+                        ForEach(missions) { mission in
+                            NavigationLink {
+                                MissionView(mission: mission, astronauts: astronauts)
+                            } label: {
+                                HStack {
+                                    VStack(alignment: .leading) {
+                                        Text(mission.displayName)
+                                            .font(.headline)
+                                            .foregroundStyle(.white)
+                                        
+                                        Text(mission.formattedLaunchDate)
+                                            .font(.caption)
+                                            .foregroundStyle(.gray)
+                                    }
                                     
-                                    Text(mission.formattedLaunchDate)
-                                        .font(.caption)
-                                        .foregroundStyle(.gray)
+                                    Spacer()
+                                    
+                                    Image(mission.image)
+                                        .resizable()
+                                        .scaledToFit()
+                                        .frame(width: 75, height: 75)
                                 }
-                                .padding(.vertical)
-                                .frame(maxWidth: .infinity)
-                                .background(.lightBackground)
                             }
-                            .clipShape(.rect(cornerRadius: 10))
-                            .overlay(
-                                RoundedRectangle(cornerRadius: 10)
-                                    .stroke(.lightBackground)
-                            )
                         }
+                        .listRowBackground(Color.darkBackground)
+                    }
+                    .listStyle(.plain)
+                } else {
+                    ScrollView {
+                        LazyVGrid(columns: columns) {
+                            ForEach(missions) { mission in
+                                NavigationLink {
+                                    MissionView(mission: mission, astronauts: astronauts)
+                                } label: {
+                                    VStack {
+                                        Image(mission.image)
+                                            .resizable()
+                                            .scaledToFit()
+                                            .frame(width: 100, height: 100)
+                                            .padding()
+                                        
+                                        VStack {
+                                            Text(mission.displayName)
+                                                .font(.headline)
+                                                .foregroundStyle(.white)
+                                            
+                                            Text(mission.formattedLaunchDate)
+                                                .font(.caption)
+                                                .foregroundStyle(.gray)
+                                        }
+                                        .padding(.vertical)
+                                        .frame(maxWidth: .infinity)
+                                        .background(.lightBackground)
+                                    }
+                                    .clipShape(.rect(cornerRadius: 10))
+                                    .overlay(
+                                        RoundedRectangle(cornerRadius: 10)
+                                            .stroke(.lightBackground)
+                                    )
+                                }
+                            }
+                        }
+                        .padding([.horizontal, .bottom])
                     }
                 }
-                .padding([.horizontal, .bottom])
             }
             .navigationTitle("Moonshot")
             .background(.darkBackground)
             .preferredColorScheme(.dark)
+            // challenge 3 - part 3
+            .toolbar {
+                Button("Toggle View", systemImage: "switch.2") {
+                    withAnimation {
+                        toggleListView.toggle()
+                    }
+                }
+                .foregroundColor(.lightBackground)
+            }
+            // changing color of toggle button
+            .tint(.white.opacity(0.5))
         }
     }
 }

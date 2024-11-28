@@ -7,13 +7,16 @@
 
 import SwiftUI
 
+/* challenge 2 - part 1.2
+ moving nested Struct CrewMember out of MissionView struct as
+ this has to be accessed by CrewView as well */
+struct CrewMember {
+    let role: String // from missions.json
+    let astronaut: Astronaut // from astronauts.json
+}
+
 struct MissionView: View {
     // merging data from two different json files
-    struct CrewMember {
-        let role: String // from missions.json
-        let astronaut: Astronaut // from astronauts.json
-    }
-    
     let mission: Mission
     let crew: [CrewMember] /* defined the property, but we
                              need to set it - done using custom
@@ -22,19 +25,23 @@ struct MissionView: View {
     var body: some View {
         ScrollView {
             VStack {
-                Image(mission.image)
-                    .resizable()
-                    .scaledToFit()
-                    .containerRelativeFrame(.horizontal) { width, axis in
-                        width * 0.6
-                    }
+                VStack(spacing: 20) {
+                    Image(mission.image)
+                        .resizable()
+                        .scaledToFit()
+                        .containerRelativeFrame(.horizontal) { width, axis in
+                            width * 0.6
+                        }
+                    
+                    /* challenge 1
+                     display launch date below mission badge */
+                    Text("Launch Date: \(mission.formattedLaunchDate)")
+                        .foregroundStyle(.white.opacity(0.7))
+                }
                 
                 VStack(alignment: .leading) {
-                    // custom divider
-                    Rectangle()
-                        .frame(height: 2)
-                        .foregroundStyle(.lightBackground)
-                        .padding(.vertical)
+                    // challenge 2 - part 2.1
+                    CustomDividerView()
                     
                     Text("Mission Highlights")
                         .font(.title.bold())
@@ -42,11 +49,8 @@ struct MissionView: View {
                     
                     Text(mission.description)
                     
-                    // custom divider
-                    Rectangle()
-                        .frame(height: 2)
-                        .foregroundStyle(.lightBackground)
-                        .padding(.vertical)
+                    // challenge 2 - part 2.1
+                    CustomDividerView()
                     
                     Text("Crew")
                         .font(.title.bold())
@@ -54,36 +58,8 @@ struct MissionView: View {
                 }
                 .padding(.horizontal)
                 
-                ScrollView(.horizontal, showsIndicators: false) {
-                    HStack {
-                        ForEach(crew, id: \.role) { crewMember in
-                            NavigationLink {
-                                AstronautView(astronaut: crewMember.astronaut)
-                            } label: {
-                                HStack {
-                                    Image(crewMember.astronaut.id)
-                                        .resizable()
-                                        .frame(width: 104, height: 72)
-                                        .clipShape(.capsule)
-                                        .overlay (
-                                            Capsule()
-                                                .strokeBorder(.white, lineWidth: 1)
-                                        )
-                                    
-                                    VStack(alignment: .leading) {
-                                        Text(crewMember.astronaut.name)
-                                            .foregroundStyle(.white)
-                                            .font(.headline.bold())
-                                        
-                                        Text(crewMember.role)
-                                            .foregroundStyle(.white.opacity(0.5))
-                                    }
-                                }
-                                .padding(.horizontal)
-                            }
-                        }
-                    }
-                }
+                // challenge 2 - part 1.1
+                CrewView(crew: crew)
             }
             .padding(.bottom)
         }
@@ -112,6 +88,6 @@ struct MissionView: View {
     let missions: [Mission] = Bundle.main.decode("missions.json")
     let astronauts: [String: Astronaut] = Bundle.main.decode("astronauts.json")
     
-    return MissionView(mission: missions[0], astronauts: astronauts)
+    return MissionView(mission: missions[1], astronauts: astronauts)
         .preferredColorScheme(.dark)
 }

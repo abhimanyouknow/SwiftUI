@@ -9,7 +9,7 @@ import SwiftUI
 
 @Observable
 class PathStore {
-    var path: NavigationPath {
+    var path: [Int] {
         didSet {
             save()
         }
@@ -19,21 +19,19 @@ class PathStore {
     
     init() {
         if let data = try? Data(contentsOf: savePath) {
-            if let decode = try? JSONDecoder().decode(NavigationPath.CodableRepresentation.self, from: data) {
-                path = NavigationPath(decode)
+            if let decode = try? JSONDecoder().decode([Int].self, from: data) {
+                path = decode
                 return
             }
         }
         
-        // initializing path as an empty nav path
-        path = NavigationPath()
+        // initializing path as an empty array
+        path = []
     }
     
     func save() {
-        guard let representation = path.codable else { return }
-        
         do {
-            let data = try JSONEncoder().encode(representation)
+            let data = try JSONEncoder().encode(path)
             try data.write(to: savePath)
         } catch {
             print("Failed to save navigation data")
@@ -50,7 +48,7 @@ struct DetailView: View {
             .navigationTitle("Number: \(number)")
             .toolbar {
                 Button("Home") {
-                    path.path = NavigationPath()
+                    path.path.removeAll()
                 }
             }
     }

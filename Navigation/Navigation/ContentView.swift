@@ -7,46 +7,63 @@
 
 import SwiftUI
 
+@Observable
+class PathStore {
+    var path: NavigationPath {
+        didSet {
+            save()
+        }
+    }
+    
+    private let savePath = URL.documentsDirectory.appending(path: "SavedPath")
+    
+    init() {
+        if let data = try? Data(contentsOf: savePath) {
+            if let decode = try? JSONDecoder().decode(NavigationPath.CodableRepresentation.self, from: data) {
+                path = NavigationPath(decode)
+                return
+            }
+        }
+        
+        // initializing path as an empty nav path
+        path = NavigationPath()
+    }
+    
+    func save() {
+        guard let representation = path.codable else { return }
+        
+        do {
+            let data = try JSONEncoder().encode(representation)
+            try data.write(to: savePath)
+        } catch {
+            print("Failed to save navigation data")
+        }
+    }
+}
+
 struct DetailView: View {
     var number: Int
-    @Binding var path: [Int] // Binding property for shared path
-    /* if we were using a NavigationPath property as path -
-     III -
-     
-     @Binding var path: NavigationPath
-     */
-
+    @Binding var path: PathStore
     
     var body: some View {
         NavigationLink("Go to random number", value: Int.random(in: 1...1000))
             .navigationTitle("Number: \(number)")
             .toolbar {
                 Button("Home") {
-                    path.removeAll() /* using the shared path
-                                      property to reset the
-                                      array, this going back
-                                      to the root view */
-                    /* if we were using a NavigationPath
-                     property as path - II -
-                     
-                     path = NavigationPath()
-                     */
+                    path.path = NavigationPath()
                 }
             }
     }
 }
 
 struct ContentView: View {
-    @State private var path = [Int]()
-    /* if we were using a NavigationPath property as path - I -
-     @State private var path = NavigationPath()
-     */
+    @State private var pathStore = PathStore()
     
     var body: some View {
-        NavigationStack(path: $path) {
-            DetailView(number: 0, path: $path)
+        NavigationStack(path: $pathStore.path) {
+            DetailView(number: 0, path: $pathStore)
                 .navigationDestination(for: Int.self) { i in
-                    DetailView(number: i, path: $path)
+                    DetailView(number: i, path: $pathStore)
                 }
         }
     }

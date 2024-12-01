@@ -7,62 +7,27 @@
 
 import SwiftUI
 
-@Observable
-class PathStore {
-    var path: [Int] {
-        didSet {
-            save()
-        }
-    }
-    
-    private let savePath = URL.documentsDirectory.appending(path: "SavedPath")
-    
-    init() {
-        if let data = try? Data(contentsOf: savePath) {
-            if let decode = try? JSONDecoder().decode([Int].self, from: data) {
-                path = decode
-                return
-            }
-        }
-        
-        // initializing path as an empty array
-        path = []
-    }
-    
-    func save() {
-        do {
-            let data = try JSONEncoder().encode(path)
-            try data.write(to: savePath)
-        } catch {
-            print("Failed to save navigation data")
-        }
-    }
-}
-
-struct DetailView: View {
-    var number: Int
-    @Binding var path: PathStore
-    
-    var body: some View {
-        NavigationLink("Go to random number", value: Int.random(in: 1...1000))
-            .navigationTitle("Number: \(number)")
-            .toolbar {
-                Button("Home") {
-                    path.path.removeAll()
-                }
-            }
-    }
-}
-
 struct ContentView: View {
-    @State private var pathStore = PathStore()
-    
     var body: some View {
-        NavigationStack(path: $pathStore.path) {
-            DetailView(number: 0, path: $pathStore)
-                .navigationDestination(for: Int.self) { i in
-                    DetailView(number: i, path: $pathStore)
-                }
+        NavigationStack {
+            List(0..<100) {
+                Text("Row \($0)")
+            }
+            .navigationTitle("Title goes here")
+            .navigationBarTitleDisplayMode(.inline)
+                /* palces nav bar title in small text at the
+                 top-centre of the screen */
+            .toolbarBackground(.blue, for: .navigationBar)
+                /* the blue background of the nav title only
+                 appears when we scroll down a little bit */
+            .toolbarColorScheme(.dark, for: .navigationBar)
+                /* changes the text color of the title to
+                 white when user scrolls the list and the
+                 background turns blue */
+            .toolbar(.hidden, for: .navigationBar)
+                /* hiding the nav bar containing the title,
+                 while retaining the functionality of
+                 navigating to different views */
         }
     }
 }

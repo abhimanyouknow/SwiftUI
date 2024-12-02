@@ -14,7 +14,8 @@ struct AddView: View {
         /* environment property used to manuall dismiss the second
          view and return to the main content view */
     
-    @State private var name = ""
+    // project 9 - challenge 2 - part 3
+    @State private var name = "Expense Name"
     @State private var type = "Personal"
     @State private var amount = 0.0
     
@@ -28,7 +29,7 @@ struct AddView: View {
         NavigationStack {
             VStack {
                 Form {
-                    TextField("Name", text: $name)
+                    //TextField("Name", text: $name)
                     
                     Picker("Type", selection: $type) {
                         ForEach(types, id: \.self) {
@@ -60,7 +61,8 @@ struct AddView: View {
                 )
                 .clipShape(.capsule)
             }
-            .navigationTitle("Add new expense")
+            // project 9 - challenge 2 - part 2
+            .navigationTitle($name)
             .toolbar {
                 Button("Save") {
                     /* adding the expense details into the list on
@@ -76,6 +78,8 @@ struct AddView: View {
             }
             // project 9 - challenge 1 - part 5
             .navigationBarBackButtonHidden()
+            // project 9 - challenge 2 - part 1
+            .navigationBarTitleDisplayMode(.inline)
         }
     }
 }

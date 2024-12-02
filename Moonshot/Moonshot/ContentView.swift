@@ -33,9 +33,10 @@ struct ContentView: View {
                 if toggleListView {
                     List {
                         ForEach(missions) { mission in
-                            NavigationLink {
-                                MissionView(mission: mission, astronauts: astronauts)
-                            } label: {
+                            // project 9 - challenge 3 - part 3
+                            NavigationLink(value: mission) {
+                                //MissionView(mission: mission, astronauts: astronauts)
+                                
                                 HStack {
                                     VStack(alignment: .leading) {
                                         Text(mission.displayName)
@@ -63,9 +64,10 @@ struct ContentView: View {
                     ScrollView {
                         LazyVGrid(columns: columns) {
                             ForEach(missions) { mission in
-                                NavigationLink {
-                                    MissionView(mission: mission, astronauts: astronauts)
-                                } label: {
+                                // project 9 - challenge 3 - part 4
+                                NavigationLink(value: mission) {
+                                    //MissionView(mission: mission, astronauts: astronauts)
+                                    
                                     VStack {
                                         Image(mission.image)
                                             .resizable()
@@ -112,6 +114,10 @@ struct ContentView: View {
             }
             // changing color of toggle button
             .tint(.white.opacity(0.5))
+            // project 9 - challenge 3 - part 5
+            .navigationDestination(for: Mission.self) { mission in
+                MissionView(mission: mission, astronauts: astronauts)
+            }
         }
     }
 }

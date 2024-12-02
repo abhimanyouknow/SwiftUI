@@ -7,9 +7,11 @@
 
 import Foundation
 
-struct Mission: Codable, Identifiable {
+// project 9 - challenge 3 - part 1
+struct Mission: Codable, Identifiable, Hashable {
     // nested struct - since CrewRole is only to be used with Mission struct
-    struct CrewRole: Codable {
+    // project 9 - challenge 3 - part 2
+    struct CrewRole: Codable, Hashable {
         let name: String
         let role: String
     }

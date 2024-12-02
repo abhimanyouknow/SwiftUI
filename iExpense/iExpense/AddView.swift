@@ -26,20 +26,39 @@ struct AddView: View {
     
     var body: some View {
         NavigationStack {
-            Form {
-                TextField("Name", text: $name)
-                
-                Picker("Type", selection: $type) {
-                    ForEach(types, id: \.self) {
-                        Text($0)
+            VStack {
+                Form {
+                    TextField("Name", text: $name)
+                    
+                    Picker("Type", selection: $type) {
+                        ForEach(types, id: \.self) {
+                            Text($0)
+                        }
                     }
+                    
+                    TextField("Amount", value: $amount, format: .currency(code: Locale.current.currency?.identifier ?? "USD"))
+                        .keyboardType(.decimalPad)
+                    /* challenge 1 - part 1: using user's
+                     default currency preference instead
+                     of USD */
                 }
                 
-                TextField("Amount", value: $amount, format: .currency(code: Locale.current.currency?.identifier ?? "USD"))
-                    .keyboardType(.decimalPad)
-                        /* challenge 1 - part 1: using user's
-                         default currency preference instead
-                         of USD */
+                // project 9 - challenge 1 - part 4
+                // adding cancel button which dismisses the view
+                Button() {
+                    dismiss()
+                } label: {
+                    Text("Cancel")
+                        .font(.headline)
+                        .foregroundStyle(.red)
+                }
+                .padding()
+                .frame(width: 300, height: 50)
+                .overlay(
+                    Capsule()
+                        .stroke(.red)
+                )
+                .clipShape(.capsule)
             }
             .navigationTitle("Add new expense")
             .toolbar {
@@ -55,6 +74,8 @@ struct AddView: View {
                     dismiss()
                 }
             }
+            // project 9 - challenge 1 - part 5
+            .navigationBarBackButtonHidden()
         }
     }
 }

@@ -77,7 +77,8 @@ struct ContentView: View {
          to this instance, we've used @Observable above the class
          definition */
     
-    @State private var showingAddExpenses = false
+    // project 9 - challenge 1 - part 1
+    //@State private var showingAddExpenses = false
         /* state property for tracking when to show/ hide the
          second view */
     
@@ -146,16 +147,22 @@ struct ContentView: View {
             .padding()
             .navigationTitle("iExpense")
             .toolbar {
-                Button("Add Expense", systemImage: "plus") {
-                    showingAddExpenses = true
+                // project 9 - challenge 1 - part 2
+                // using nav link instead of sheet
+//                Button("Add Expense", systemImage: "plus") {
+//                    //showingAddExpenses = true
+//                }
+                NavigationLink("Add Expense") {
+                    AddView(expenses: expenses)
                 }
             }
-            .sheet(isPresented: $showingAddExpenses) {
-                AddView(expenses: expenses)
+            // project 9 - challenge 1 - part 3
+            //.sheet(isPresented: $showingAddExpenses) {
+                //AddView(expenses: expenses)
                 /* showing the second view, while also sharing
                  the same observable object class between the
                  two views */
-            }
+            //}
         }
     }
     

@@ -7,6 +7,14 @@
 
 import Foundation
 
+// challenge 1 - part 1
+// creating an extension to remove white spaces and new lines from a string
+extension String {
+    func trimmed() -> String {
+        self.trimmingCharacters(in: .whitespacesAndNewlines)
+    }
+}
+
 @Observable
 class Order: Codable {
     enum CodingKeys: String, CodingKey {
@@ -44,7 +52,8 @@ class Order: Codable {
     var zip = ""
     
     var hasValidAddress: Bool {
-        if name.isEmpty || streetAddress.isEmpty || city.isEmpty || zip.isEmpty {
+        // challenge 1 - part 2
+        if name.trimmed().isEmpty || streetAddress.trimmed().isEmpty || city.trimmed().isEmpty || zip.trimmed().isEmpty {
             return false
         }
         

@@ -9,14 +9,12 @@ import SwiftUI
 
 struct ContentView: View {
     @AppStorage("notes") private var notes = ""
-        /* @AppStorage is basically using UserDefaults for
-         storing simple things, but this should NOT be used
-         to store secure information (usernames, passwords,
-         etc.) */
     
     var body: some View {
         NavigationStack {
-            TextEditor(text: $notes)
+            TextField("Enter your text", text: $notes, axis: .vertical)
+                .textFieldStyle(.roundedBorder)
+                    // to see the borders of the text field
                 .navigationTitle("Notes")
                 .padding()
         }

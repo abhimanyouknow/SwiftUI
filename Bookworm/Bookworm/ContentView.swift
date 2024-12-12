@@ -30,6 +30,8 @@ struct ContentView: View {
                             VStack(alignment: .leading) {
                                 Text(book.title)
                                     .font(.headline)
+                                    // challenge 2
+                                    .foregroundStyle(book.rating == 1 ? Color.red : Color.black)
                                 
                                 Text(book.author)
                                     .foregroundStyle(.secondary)

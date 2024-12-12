@@ -24,7 +24,7 @@ struct AddBookView: View {
     @State private var review = ""
     @State private var rating = 3
     
-    let genres = ["Fantasy", "Horror", "Kids", "Myster", "Romance", "Poetry", "Thriller"]
+    let genres = ["Fantasy", "Horror", "Kids", "Mystery", "Romance", "Poetry", "Thriller"]
     
     // challenge 1 - part 2
     var isValidEntry: Bool {

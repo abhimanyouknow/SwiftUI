@@ -7,6 +7,13 @@
 
 import SwiftUI
 
+// challenge 1 - part 1
+extension String {
+    func trimmed() -> String {
+        self.trimmingCharacters(in: .whitespacesAndNewlines)
+    }
+}
+
 struct AddBookView: View {
     @Environment(\.modelContext) var modelContext
     @Environment(\.dismiss) var dismiss
@@ -18,6 +25,15 @@ struct AddBookView: View {
     @State private var rating = 3
     
     let genres = ["Fantasy", "Horror", "Kids", "Myster", "Romance", "Poetry", "Thriller"]
+    
+    // challenge 1 - part 2
+    var isValidEntry: Bool {
+        if title.trimmed().isEmpty || author.trimmed().isEmpty {
+            return false
+        }
+        
+        return true
+    }
     
     var body: some View {
         NavigationStack {
@@ -48,6 +64,8 @@ struct AddBookView: View {
                         dismiss()
                     }
                 }
+                // challenge 1 - part 3
+                .disabled(!isValidEntry)
             }
             .navigationTitle("Add Book")
         }

@@ -5,23 +5,18 @@
 //  Created by C3PO MBP on 23/11/24.
 //
 
-// this is the second view
-
+import SwiftData
 import SwiftUI
 
 struct AddView: View {
     @Environment(\.dismiss) var dismiss
-        /* environment property used to manuall dismiss the second
-         view and return to the main content view */
+    @Environment(\.modelContext) var modelContext
     
-    // project 9 - challenge 2 - part 3
     @State private var name = "Expense Name"
     @State private var type = "Personal"
     @State private var amount = 0.0
     
-    var expenses: Expenses
-        /* property refering to the same Expenses class instance
-         as the main content view */
+    var expenses: [ExpenseItem]
     
     let types = ["Business", "Personal"]
     
@@ -29,8 +24,6 @@ struct AddView: View {
         NavigationStack {
             VStack {
                 Form {
-                    //TextField("Name", text: $name)
-                    
                     Picker("Type", selection: $type) {
                         ForEach(types, id: \.self) {
                             Text($0)
@@ -39,13 +32,8 @@ struct AddView: View {
                     
                     TextField("Amount", value: $amount, format: .currency(code: Locale.current.currency?.identifier ?? "USD"))
                         .keyboardType(.decimalPad)
-                    /* challenge 1 - part 1: using user's
-                     default currency preference instead
-                     of USD */
                 }
                 
-                // project 9 - challenge 1 - part 4
-                // adding cancel button which dismisses the view
                 Button() {
                     dismiss()
                 } label: {
@@ -61,30 +49,30 @@ struct AddView: View {
                 )
                 .clipShape(.capsule)
             }
-            // project 9 - challenge 2 - part 2
             .navigationTitle($name)
             .toolbar {
                 Button("Save") {
-                    /* adding the expense details into the list on
-                     the main content view by appending the new
-                     ExpenseItem instance into the shared expenses
-                     class instance */
                     let item = ExpenseItem(name: name, type: type, amount: amount)
-                    expenses.items.append(item)
                     
-                    // dismissing this view
+                    modelContext.insert(item)
                     dismiss()
                 }
             }
-            // project 9 - challenge 1 - part 5
             .navigationBarBackButtonHidden()
-            // project 9 - challenge 2 - part 1
             .navigationBarTitleDisplayMode(.inline)
         }
     }
 }
 
 #Preview {
-    // adding parameters which we are passing between the two views
-    AddView(expenses: Expenses())
+    do {
+        let config = ModelConfiguration(isStoredInMemoryOnly: true)
+        let container = try ModelContainer(for: ExpenseItem.self, configurations: config)
+        let sampleExpense = ExpenseItem(id: UUID(), name: "lunch", type: "Personal", amount: 20)
+        
+        return AddView(expenses: [sampleExpense])
+            .modelContainer(container)
+    } catch {
+        return Text("Failed to load container: \(error.localizedDescription)")
+    }
 }

@@ -9,6 +9,7 @@ import SwiftData
 import SwiftUI
 
 struct ExpensesView: View {
+    @Environment(\.modelContext) var modelContext
     @Query var expenses: [ExpenseItem]
     
     init(filterOption: String, sortOrder: [SortDescriptor<ExpenseItem>]) {
@@ -42,16 +43,17 @@ struct ExpensesView: View {
                             .foregroundStyle(item.amount < 10.0 ? .green : item.amount < 100.0 ? .blue : .red)
                     }
                 }
-                .onDelete { indexSet in
-                    removeItems(at: indexSet)
-                }
+                .onDelete(perform: removeExpense)
             }
             .listStyle(.inset)
         }
     }
     
-    func removeItems(at offset: IndexSet) {
-        //expenses.items.remove(atOffsets: offset)
+    func removeExpense(at offsets: IndexSet) {
+        for offset in offsets {
+            let expense = expenses[offset]
+            modelContext.delete(expense)
+        }
     }
 }
 

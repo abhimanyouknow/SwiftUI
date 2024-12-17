@@ -49,7 +49,9 @@ struct ContentView: View {
             }
             .navigationTitle("Users")
             .task {
-                await loadData()
+                if users.count == 0 {
+                    await loadData()
+                }
             }
         }
     }

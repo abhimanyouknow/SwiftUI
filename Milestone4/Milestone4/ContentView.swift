@@ -5,29 +5,12 @@
 //  Created by C3PO MBP on 17/12/24.
 //
 
+import SwiftData
 import SwiftUI
 
-struct User: Codable {
-    var id: UUID
-    var isActive: Bool
-    var name: String
-    var age: Int
-    var company: String
-    var email: String
-    var address: String
-    var about: String
-    var registered: Date
-    var tags: [String]
-    var friends: [Friend]
-}
-
-struct Friend: Codable, Hashable {
-    var id: UUID
-    var name: String
-}
-
 struct ContentView: View {
-    @State private var users = [User]()
+    @Environment(\.modelContext) var modelContext
+    @Query var users: [User]
     
     var body: some View {
         NavigationStack {
@@ -68,11 +51,15 @@ struct ContentView: View {
             let decoder = JSONDecoder()
             decoder.dateDecodingStrategy = .iso8601
             
-            if let decodedUsers = try? decoder.decode([User].self, from: data) {
-                users = decodedUsers
+            let decodedUsers = try decoder.decode([User].self, from: data)
+                        
+            await MainActor.run {
+                for user in decodedUsers {
+                    modelContext.insert(user)
+                }
             }
         } catch {
-            print("Invalid data")
+            print("Invalid data: \(error.localizedDescription)")
         }
     }
 }

@@ -11,23 +11,33 @@ import SwiftUI
 
 struct ContentView: View {
     // step 2
-    @State private var pickerItem: PhotosPickerItem?
-    @State private var selectedImage: Image?
+    @State private var pickerItems = [PhotosPickerItem]()
+    @State private var selectedImages = [Image]()
     
     var body: some View {
         VStack {
             // step 3
-            PhotosPicker("Select a picture", selection: $pickerItem, matching: .images)
+            PhotosPicker("Select a picture", selection: $pickerItems, maxSelectionCount: 3, matching: .images)
             
             // step 5
-            selectedImage?
-                .resizable()
-                .scaledToFit()
+            ScrollView {
+                ForEach(0..<selectedImages.count, id: \.self) { i in
+                    selectedImages[i]
+                        .resizable()
+                        .scaledToFit()
+                }
+            }
         }
         // step 4
-        .onChange(of: pickerItem) {
+        .onChange(of: pickerItems) {
             Task {
-                selectedImage = try await pickerItem?.loadTransferable(type: Image.self)
+                selectedImages.removeAll()
+                
+                for item in pickerItems {
+                    if let loadedImage = try await item.loadTransferable(type: Image.self) {
+                        selectedImages.append(loadedImage)
+                    }
+                }
             }
         }
     }

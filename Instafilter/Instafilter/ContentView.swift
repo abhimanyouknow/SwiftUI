@@ -17,7 +17,9 @@ struct ContentView: View {
     var body: some View {
         VStack {
             // step 3
-            PhotosPicker("Select a picture", selection: $pickerItems, maxSelectionCount: 3, matching: .images)
+            PhotosPicker(selection: $pickerItems, maxSelectionCount: 3, matching: .any(of: [.images, .not(.screenshots)])) {
+                Label("Select 3 pictures", systemImage: "photo")
+            }
             
             // step 5
             ScrollView {

@@ -91,6 +91,10 @@ struct ContentView: View {
                 Button("Sepia Tone") { setFilter(CIFilter.sepiaTone()) }
                 Button("Unsharp Mask") { setFilter(CIFilter.unsharpMask()) }
                 Button("Vignette") { setFilter(CIFilter.vignette()) }
+                // challenge 3
+                Button("Bloom") { setFilter(CIFilter.bloom()) }
+                Button("Comic Effect") { setFilter(CIFilter.comicEffect()) }
+                Button("Motion Blur") { setFilter(CIFilter.motionBlur()) }
                 
                 Button("Cancel", role: .cancel) { }
             }

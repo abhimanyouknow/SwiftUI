@@ -46,29 +46,28 @@ struct ContentView: View {
                 
                 // challenge 2 - part 2
                 HStack {
-                    let inputKeys = currentFilter.inputKeys
-                    
-                    if inputKeys.contains(kCIInputIntensityKey) {
-                        Text("Intensity")
-                        Slider(value: $filterIntensity)
-                            .onChange(of: filterIntensity, applyProcessing)
-                    }
-                    
-                    
-                    if inputKeys.contains(kCIInputRadiusKey) {
-                        Text("Radius")
-                        Slider(value: $filterRadius)
-                            .onChange(of: filterRadius, applyProcessing)
-                    }
-                    
-                    if inputKeys.contains(kCIInputScaleKey) {
-                        Text("Scale")
-                        Slider(value: $filterScale)
-                            .onChange(of: filterScale, applyProcessing)
-                    }
+                    Text("Intensity")
+                    Slider(value: $filterIntensity)
+                        .onChange(of: filterIntensity, applyProcessing)
                 }
                 // challenge 1 - part 1
-                .disabled(processedImage == nil)
+                .disabled(processedImage == nil || !currentFilter.inputKeys.contains(kCIInputIntensityKey))
+                
+                // challenge 2 - part 3
+                HStack {
+                    Text("Radius")
+                    Slider(value: $filterRadius)
+                        .onChange(of: filterRadius, applyProcessing)
+                }
+                .disabled(processedImage == nil ||  !currentFilter.inputKeys.contains(kCIInputRadiusKey))
+                
+                // challenge 2 - part 4
+                HStack {
+                    Text("Scale")
+                    Slider(value: $filterScale)
+                        .onChange(of: filterScale, applyProcessing)
+                }
+                .disabled(processedImage == nil || !currentFilter.inputKeys.contains(kCIInputScaleKey))
                 
                 HStack {
                     Button("Change filter", action: changeFilter)
@@ -120,11 +119,11 @@ struct ContentView: View {
         if inputKeys.contains(kCIInputIntensityKey) {
             currentFilter.setValue(filterIntensity, forKey: kCIInputIntensityKey)
         }
-        // challenge 2 - part 3
+        // challenge 2 - part 5
         if inputKeys.contains(kCIInputRadiusKey) {
             currentFilter.setValue(filterRadius * 100, forKey: kCIInputRadiusKey)
         }
-        // challenge 2 - part 4
+        // challenge 2 - part 6
         if inputKeys.contains(kCIInputScaleKey) {
             currentFilter.setValue(filterScale * 10, forKey: kCIInputScaleKey)
         }

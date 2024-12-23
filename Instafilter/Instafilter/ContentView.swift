@@ -14,6 +14,9 @@ import SwiftUI
 struct ContentView: View {
     @State private var processedImage: Image?
     @State private var filterIntensity = 0.5
+    // challenge 2 - part 1
+    @State private var filterRadius = 0.5
+    @State private var filterScale = 0.5
     @State private var selectedItem: PhotosPickerItem?
     @State private var showingFilters = false
     
@@ -41,10 +44,28 @@ struct ContentView: View {
                 
                 Spacer()
                 
+                // challenge 2 - part 2
                 HStack {
-                    Text("Intensity")
-                    Slider(value: $filterIntensity)
-                        .onChange(of: filterIntensity, applyProcessing)
+                    let inputKeys = currentFilter.inputKeys
+                    
+                    if inputKeys.contains(kCIInputIntensityKey) {
+                        Text("Intensity")
+                        Slider(value: $filterIntensity)
+                            .onChange(of: filterIntensity, applyProcessing)
+                    }
+                    
+                    
+                    if inputKeys.contains(kCIInputRadiusKey) {
+                        Text("Radius")
+                        Slider(value: $filterRadius)
+                            .onChange(of: filterRadius, applyProcessing)
+                    }
+                    
+                    if inputKeys.contains(kCIInputScaleKey) {
+                        Text("Scale")
+                        Slider(value: $filterScale)
+                            .onChange(of: filterScale, applyProcessing)
+                    }
                 }
                 // challenge 1 - part 1
                 .disabled(processedImage == nil)
@@ -99,11 +120,13 @@ struct ContentView: View {
         if inputKeys.contains(kCIInputIntensityKey) {
             currentFilter.setValue(filterIntensity, forKey: kCIInputIntensityKey)
         }
+        // challenge 2 - part 3
         if inputKeys.contains(kCIInputRadiusKey) {
-            currentFilter.setValue(filterIntensity * 200, forKey: kCIInputRadiusKey)
+            currentFilter.setValue(filterRadius * 100, forKey: kCIInputRadiusKey)
         }
+        // challenge 2 - part 4
         if inputKeys.contains(kCIInputScaleKey) {
-            currentFilter.setValue(filterIntensity * 10, forKey: kCIInputScaleKey)
+            currentFilter.setValue(filterScale * 10, forKey: kCIInputScaleKey)
         }
         
         

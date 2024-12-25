@@ -8,35 +8,16 @@
 import MapKit
 import SwiftUI
 
-// step 1: defining a new type that contains location info (this must conform to Identifiable)
-struct Location: Identifiable {
-    let id = UUID()
-    var name: String
-    var coordinate: CLLocationCoordinate2D
-}
-
 struct ContentView: View {
-    // step 2: make an array of all those locations in one place
-    let locations = [
-        Location(name: "Old Trafford", coordinate: CLLocationCoordinate2D(latitude: 53.4631, longitude: -2.2913)),
-        Location(name: "Wembly", coordinate: CLLocationCoordinate2D(latitude: 51.5560, longitude: -0.2796))
-    ]
-    
     var body: some View {
         VStack {
-            // step 3: add locations on the map as annotations
-            Map {
-                ForEach(locations) { location in
-                    Annotation(location.name, coordinate: location.coordinate) {
-                        Text(location.name)
-                            .font(.headline)
-                            .padding()
-                            .background(.blue.gradient)
-                            .foregroundStyle(.white)
-                            .clipShape(.capsule)
+            MapReader { proxy in
+                Map()
+                    .onTapGesture { position in
+                        if let coordinate = proxy.convert(position, from: .local) {
+                            print(coordinate)
+                        }
                     }
-                    .annotationTitles(.hidden) // hiding the default markers
-                }
             }
         }
     }

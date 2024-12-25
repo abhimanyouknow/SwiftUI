@@ -19,8 +19,11 @@ struct ContentView: View {
         VStack {
             Map(position: $position)
                 .mapStyle(.hybrid(elevation: .realistic))
+                .onMapCameraChange { context in
+                    print(context.region)
+                }
             
-            HStack {
+            HStack(spacing: 80) {
                 Button("Paris") {
                     position = MapCameraPosition.region(
                         MKCoordinateRegion(

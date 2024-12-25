@@ -8,34 +8,26 @@
 import MapKit
 import SwiftUI
 
+// step 1: defining a new type that contains location info (this must conform to Identifiable)
+struct Location: Identifiable {
+    let id = UUID()
+    var name: String
+    var coordinate: CLLocationCoordinate2D
+}
+
 struct ContentView: View {
-    // setting london as a position
-    @State private var position = MapCameraPosition.region(
-        MKCoordinateRegion(
-            center: CLLocationCoordinate2D(latitude: 51.507222, longitude: -0.1275),
-            span: MKCoordinateSpan(latitudeDelta: 1, longitudeDelta: 1)))
+    // step 2: make an array of all those locations in one place
+    let locations = [
+        Location(name: "Old Trafford", coordinate: CLLocationCoordinate2D(latitude: 53.4631, longitude: -2.2913)),
+        Location(name: "Wembly", coordinate: CLLocationCoordinate2D(latitude: 51.5560, longitude: -0.2796))
+    ]
     
     var body: some View {
         VStack {
-            Map(position: $position)
-                .mapStyle(.hybrid(elevation: .realistic))
-                .onMapCameraChange(frequency: .continuous) { context in
-                    print(context.region)
-                }
-            
-            HStack(spacing: 80) {
-                Button("Paris") {
-                    position = MapCameraPosition.region(
-                        MKCoordinateRegion(
-                            center: CLLocationCoordinate2D(latitude: 48.8566, longitude: 2.3522),
-                            span: MKCoordinateSpan(latitudeDelta: 1, longitudeDelta: 1)))
-                }
-                
-                Button("Tokyo") {
-                    position = MapCameraPosition.region(
-                        MKCoordinateRegion(
-                            center: CLLocationCoordinate2D(latitude: 35.6897, longitude: 139.6922),
-                            span: MKCoordinateSpan(latitudeDelta: 1, longitudeDelta: 1)))
+            // step 3: add locations on the map as annotations
+            Map {
+                ForEach(locations) { location in
+                    Marker(location.name, coordinate: location.coordinate)
                 }
             }
         }

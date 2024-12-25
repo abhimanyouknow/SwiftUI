@@ -27,7 +27,15 @@ struct ContentView: View {
             // step 3: add locations on the map as annotations
             Map {
                 ForEach(locations) { location in
-                    Marker(location.name, coordinate: location.coordinate)
+                    Annotation(location.name, coordinate: location.coordinate) {
+                        Text(location.name)
+                            .font(.headline)
+                            .padding()
+                            .background(.blue.gradient)
+                            .foregroundStyle(.white)
+                            .clipShape(.capsule)
+                    }
+                    .annotationTitles(.hidden) // hiding the default markers
                 }
             }
         }

@@ -10,6 +10,7 @@ import SwiftUI
 
 struct ContentView: View {
     @State private var locations = [Location]()
+    @State private var selectedPlace: Location?
     
     var body: some View {
         MapReader { proxy in
@@ -22,6 +23,12 @@ struct ContentView: View {
                             .frame(width: 44, height: 44)
                             .background(.white)
                             .clipShape(.circle)
+                            .simultaneousGesture(
+                                LongPressGesture(minimumDuration: 1)
+                                    .onEnded { _ in
+                                        selectedPlace = location
+                                    }
+                            )
                     }
                 }
             }
@@ -30,6 +37,13 @@ struct ContentView: View {
                     let newLocation = Location(id: UUID(), name: "New Location", description: "", latitude: coordinate.latitude, longitude: coordinate.longitude)
                     
                     locations.append(newLocation)
+                }
+            }
+            .sheet(item: $selectedPlace) { place in
+                EditView(location: place) { newLocation in
+                    if let index = locations.firstIndex(of: place) {
+                        locations[index] = newLocation
+                    }
                 }
             }
         }

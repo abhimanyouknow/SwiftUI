@@ -19,6 +19,9 @@ extension ContentView {
         private(set) var locations: [Location]
         var selectedPlace: Location?
         var isUnlocked = false
+        // challenge 2 - part 1
+        var showingUnlockError = false
+        var unlockErrorMessage = ""
         
         let savePath = URL.documentsDirectory.appending(path: "SavedPlaces")
         
@@ -67,7 +70,9 @@ extension ContentView {
                     if success {
                         self.isUnlocked = true
                     } else {
-                        // error
+                        // challenge 2 - part 2
+                        self.unlockErrorMessage = authenticationError?.localizedDescription ?? "Unknown error"
+                        self.showingUnlockError = true
                     }
                 }
             } else {

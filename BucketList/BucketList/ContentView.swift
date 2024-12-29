@@ -78,6 +78,13 @@ struct ContentView: View {
                 .background(.blue)
                 .foregroundStyle(.white)
                 .clipShape(.capsule)
+            
+                // challenge 2 - part 3
+                .alert("Authentication Failed", isPresented: $viewModel.showingUnlockError) {
+                    Button("OK", role: .cancel) {}
+                } message: {
+                    Text(viewModel.unlockErrorMessage)
+                }
         }
     }
 }

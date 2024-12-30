@@ -25,7 +25,8 @@ struct ContentView: View {
     @State private var selectedPicture = Int.random(in: 0...3)
     
     var body: some View {
-        Image(decorative: "character")
+        Image(.character)
+            .accessibilityHidden(true)
     }
 }
 

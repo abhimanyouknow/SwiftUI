@@ -42,6 +42,10 @@ struct ExpensesView: View {
                             .currency(code: Locale.current.currency?.identifier ?? "USD"))
                             .foregroundStyle(item.amount < 10.0 ? .green : item.amount < 100.0 ? .blue : .red)
                     }
+                    // project 15 - challenge 2
+                    .accessibilityElement()
+                    .accessibilityLabel("\(item.name) is an expense of \(item.amount)")
+                    .accessibilityHint("Expense type: \(item.type)")
                 }
                 .onDelete(perform: removeExpense)
             }

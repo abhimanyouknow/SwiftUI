@@ -26,6 +26,8 @@ struct AddView: View {
         inputName.isEmpty || processedImage == nil
     }
     
+    let location: CLLocationCoordinate2D
+    
     var body: some View {
         NavigationStack {
             VStack {
@@ -42,7 +44,7 @@ struct AddView: View {
                             .resizable()
                             .scaledToFit()
                     } else {
-                        ContentUnavailableView("No photo", systemImage: "photo.badge.plus", description: Text("Tap to import a photo"))
+                        ContentUnavailableView("No photo selected", systemImage: "photo.badge.plus", description: Text("Tap to import a photo"))
                     }
                 }
                 .onChange(of: selectedItem, loadImage)
@@ -52,7 +54,7 @@ struct AddView: View {
             .toolbar {
                 ToolbarItem {
                     Button("Save") {
-                        let newPerson = People(name: inputName, photo: inputImageData!)
+                        let newPerson = People(name: inputName, photo: inputImageData!, latitude: location.latitude, longitude: location.longitude)
                         
                         modelContext.insert(newPerson)
                         dismiss()
@@ -91,5 +93,5 @@ struct AddView: View {
 }
 
 #Preview {
-    AddView()
+    AddView(location: CLLocationCoordinate2D(latitude: 0, longitude: 0))
 }

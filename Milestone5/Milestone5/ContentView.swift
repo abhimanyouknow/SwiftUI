@@ -5,6 +5,7 @@
 //  Created by C3PO MBP on 02/01/25.
 //
 
+import MapKit
 import SwiftData
 import SwiftUI
 
@@ -15,6 +16,7 @@ struct ContentView: View {
     @State private var showingAddPerson = false
     
     let context = CIContext()
+    let locationFetcher = LocationFetcher()
     
     var body: some View {
         NavigationStack {
@@ -30,6 +32,7 @@ struct ContentView: View {
                                 .resizable()
                                 .frame(width: 50, height: 50)
                                 .scaledToFit()
+                                .cornerRadius(20)
                         }
                     }
                 }
@@ -47,7 +50,10 @@ struct ContentView: View {
                 }
             }
             .sheet(isPresented: $showingAddPerson) {
-                AddView()
+                AddView(location: locationFetcher.lastKnownLocation ?? CLLocationCoordinate2D(latitude: 0, longitude: 0))
+            }
+            .onAppear() {
+                locationFetcher.start()
             }
         }
     }

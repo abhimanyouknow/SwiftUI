@@ -36,50 +36,55 @@ struct ProspectsView: View {
     var body: some View {
         NavigationStack {
             List(prospects, selection: $selectedProspects) { prospect in
-                VStack(alignment: .leading) {
-                    // challenge 1
-                    HStack {
-                        VStack(alignment: .leading) {
-                            Text(prospect.name)
-                                .font(.headline)
+                // challenge 2 - part 2
+                NavigationLink {
+                    EditView(prospect: prospect)
+                } label: {
+                    VStack(alignment: .leading) {
+                        // challenge 1
+                        HStack {
+                            VStack(alignment: .leading) {
+                                Text(prospect.name)
+                                    .font(.headline)
+                                
+                                Text(prospect.emailAddress)
+                                    .foregroundStyle(.secondary)
+                            }
                             
-                            Text(prospect.emailAddress)
-                                .foregroundStyle(.secondary)
+                            Spacer()
+                            
+                            if prospect.isContacted {
+                                Image(systemName: "checkmark.circle")
+                            }
                         }
-                        
-                        Spacer()
+                    }
+                    .swipeActions {
+                        /* delete button must be added first so that the
+                         fill swipe to delete functionality works
+                         correctly */
+                        Button("Delete", systemImage: "trash", role: .destructive) {
+                            modelContext.delete(prospect)
+                        }
                         
                         if prospect.isContacted {
-                            Image(systemName: "checkmark.circle")
+                            Button("Mark Uncontacted", systemImage: "person.crop.circle.badge.xmark") {
+                                prospect.isContacted.toggle()
+                            }
+                            .tint(.blue)
+                        } else {
+                            Button("Mark Contacted", systemImage: "person.crop.circle.fill.badge.checkmark") {
+                                prospect.isContacted.toggle()
+                            }
+                            .tint(.green)
+                            
+                            Button("Remind me", systemImage: "bell") {
+                                addNotification(for: prospect)
+                            }
+                            .tint(.orange)
                         }
                     }
+                    .tag(prospect)
                 }
-                .swipeActions {
-                    /* delete button must be added first so that the
-                     fill swipe to delete functionality works
-                     correctly */
-                    Button("Delete", systemImage: "trash", role: .destructive) {
-                        modelContext.delete(prospect)
-                    }
-                    
-                    if prospect.isContacted {
-                        Button("Mark Uncontacted", systemImage: "person.crop.circle.badge.xmark") {
-                            prospect.isContacted.toggle()
-                        }
-                        .tint(.blue)
-                    } else {
-                        Button("Mark Contacted", systemImage: "person.crop.circle.fill.badge.checkmark") {
-                            prospect.isContacted.toggle()
-                        }
-                        .tint(.green)
-                        
-                        Button("Remind me", systemImage: "bell") {
-                            addNotification(for: prospect)
-                        }
-                        .tint(.orange)
-                    }
-                }
-                .tag(prospect)
             }
             .navigationTitle(title)
             .toolbar {

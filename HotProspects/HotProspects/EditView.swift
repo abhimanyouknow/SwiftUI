@@ -16,10 +16,12 @@ struct EditView: View {
         Form {
             TextField("Name", text: $prospect.name)
             TextField("Email Address", text: $prospect.emailAddress)
+            Text("Details added on: \(prospect.addDate.formatted())")
+                .foregroundStyle(.secondary) // challenge 3 - part 2
         }
     }
 }
 
 #Preview {
-    EditView(prospect: Prospect(name: "Wayne Rooney", emailAddress: "w.rooney@manutd.com", isContacted: false))
+    EditView(prospect: Prospect(name: "Wayne Rooney", emailAddress: "w.rooney@manutd.com", isContacted: false, addDate: Date.now))
 }

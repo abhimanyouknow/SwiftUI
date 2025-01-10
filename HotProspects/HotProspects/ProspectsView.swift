@@ -16,7 +16,7 @@ struct ProspectsView: View {
     }
     
     @Environment(\.modelContext) var modelContext
-    @Query(sort: \Prospect.name) var prospects: [Prospect]
+    @Query var prospects: [Prospect] // challenge 3 - part 5
     @State private var isShowingScanner = false
     @State private var selectedProspects = Set<Prospect>()
     
@@ -110,7 +110,8 @@ struct ProspectsView: View {
         }
     }
     
-    init(filter: FilterType) {
+    // challenge 3 - part 6
+    init(filter: FilterType, sortOrder: [SortDescriptor<Prospect>]) {
         self.filter = filter
         
         if filter != .none {
@@ -118,7 +119,9 @@ struct ProspectsView: View {
             
             _prospects = Query(filter: #Predicate {
                 $0.isContacted == showContactedOnly
-            }, sort: [SortDescriptor(\Prospect.name)])
+            }, sort: sortOrder)
+        } else {
+            _prospects = Query(sort: sortOrder)
         }
     }
     
@@ -130,7 +133,8 @@ struct ProspectsView: View {
             let details = result.string.components(separatedBy: "\n")
             guard details.count == 2 else { return }
             
-            let person = Prospect(name: details[0], emailAddress: details[1], isContacted: false)
+            // challenge 3 - part 7
+            let person = Prospect(name: details[0], emailAddress: details[1], isContacted: false, addDate: .now)
             
             modelContext.insert(person)
         case .failure(let error):
@@ -183,6 +187,7 @@ struct ProspectsView: View {
 }
 
 #Preview {
-    ProspectsView(filter: .none)
+    // challenge 3 - part 8
+    ProspectsView(filter: .none, sortOrder: [SortDescriptor(\Prospect.name)])
         .modelContainer(for: Prospect.self)
 }

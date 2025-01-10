@@ -8,27 +8,67 @@
 import SwiftUI
 
 struct ContentView: View {
+    // challenge 3 - part 3
+    @State private var sortOrder = [
+        SortDescriptor(\Prospect.addDate, order: .reverse),
+        SortDescriptor(\Prospect.name)
+    ]
+    
     var body: some View {
-        TabView {
-            ProspectsView(filter: .none)
-                .tabItem {
-                    Label("Everyone", systemImage: "person.3")
-                }
+        // challenge 3 - part 4
+        ZStack {
+            TabView {
+                ProspectsView(filter: .none, sortOrder: sortOrder)
+                    .tabItem {
+                        Label("Everyone", systemImage: "person.3")
+                    }
+                
+                ProspectsView(filter: .contacted, sortOrder: sortOrder)
+                    .tabItem {
+                        Label("Contacted", systemImage: "checkmark.circle")
+                    }
+                
+                ProspectsView(filter: .uncontacted, sortOrder: sortOrder)
+                    .tabItem {
+                        Label("Uncontacted", systemImage: "questionmark.diamond")
+                    }
+                
+                MeView()
+                    .tabItem {
+                        Label("Me", systemImage: "person.crop.square")
+                    }
+            }
             
-            ProspectsView(filter: .contacted)
-                .tabItem {
-                    Label("Contacted", systemImage: "checkmark.circle")
+            VStack {
+                HStack {
+                    Button {
+                        sortOrder = [
+                            SortDescriptor(\Prospect.name),
+                            SortDescriptor(\Prospect.addDate, order: .reverse)
+                        ]
+                    } label: {
+                        HStack {
+                            Image(systemName: "arrow.up.arrow.down")
+                            Text("Name")
+                        }
+                    }
+                    
+                    Button {
+                        sortOrder = [
+                            SortDescriptor(\Prospect.addDate, order: .reverse),
+                            SortDescriptor(\Prospect.name)
+                        ]
+                    } label: {
+                        HStack {
+                            Image(systemName: "arrow.up.arrow.down")
+                            Text("Recently Added")
+                        }
+                    }
                 }
-            
-            ProspectsView(filter: .uncontacted)
-                .tabItem {
-                    Label("Uncontacted", systemImage: "questionmark.diamond")
-                }
-            
-            MeView()
-                .tabItem {
-                    Label("Me", systemImage: "person.crop.square")
-                }
+                .padding()
+                
+                Spacer()
+            }
         }
     }
 }

@@ -37,11 +37,22 @@ struct ProspectsView: View {
         NavigationStack {
             List(prospects, selection: $selectedProspects) { prospect in
                 VStack(alignment: .leading) {
-                    Text(prospect.name)
-                        .font(.headline)
-                    
-                    Text(prospect.emailAddress)
-                        .foregroundStyle(.secondary)
+                    // challenge 1
+                    HStack {
+                        VStack(alignment: .leading) {
+                            Text(prospect.name)
+                                .font(.headline)
+                            
+                            Text(prospect.emailAddress)
+                                .foregroundStyle(.secondary)
+                        }
+                        
+                        Spacer()
+                        
+                        if prospect.isContacted {
+                            Image(systemName: "checkmark.circle")
+                        }
+                    }
                 }
                 .swipeActions {
                     /* delete button must be added first so that the

@@ -15,9 +15,12 @@ struct ContentView: View {
                     print("Text tapped")
                 }
         }
-        .onTapGesture {
-            print("VStack tapped")
-        }
+        .highPriorityGesture(
+            TapGesture()
+                .onEnded {
+                    print("VStack tapped")
+                }
+        )
     }
 }
 

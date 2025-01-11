@@ -13,6 +13,8 @@ struct ContentView: View {
             Text("Hello, world!")
                 .onLongPressGesture(minimumDuration: 2) {
                     print("Double tapped")
+                } onPressingChanged: { inProgress in
+                    print("In progress: \(inProgress)")
                 }
         }
         .padding()

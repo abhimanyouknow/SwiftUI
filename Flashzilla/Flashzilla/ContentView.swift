@@ -10,11 +10,8 @@ import SwiftUI
 struct ContentView: View {
     var body: some View {
         VStack {
-            Image(systemName: "globe")
-                .imageScale(.large)
-                .foregroundStyle(.tint)
             Text("Hello, world!")
-                .onTapGesture(count: 2) {
+                .onLongPressGesture(minimumDuration: 2) {
                     print("Double tapped")
                 }
         }

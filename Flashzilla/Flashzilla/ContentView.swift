@@ -14,6 +14,9 @@ struct ContentView: View {
                 .imageScale(.large)
                 .foregroundStyle(.tint)
             Text("Hello, world!")
+                .onTapGesture(count: 2) {
+                    print("Double tapped")
+                }
         }
         .padding()
     }

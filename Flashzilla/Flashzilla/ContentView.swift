@@ -8,23 +8,20 @@
 import SwiftUI
 
 struct ContentView: View {
-    // step 1 - new property to watch the environemnt value scenePhase
-    @Environment(\.scenePhase) var scenePhase
+    @Environment(\.accessibilityDifferentiateWithoutColor) var accessibilityDifferentiateWithoutColor
     
     var body: some View {
-        Text("Hello, world!")
-            /* step 2 - using an .onChange() modifier to watch when the
-             scenePhase is changing */
-            .onChange(of: scenePhase) { oldPhase, newPhase in
-                // step 3 - responding to that scenePhase somehow
-                if newPhase == .active {
-                    print("Active")
-                } else if newPhase == .inactive {
-                    print("Inactive")
-                } else if newPhase == .background {
-                    print("Background")
-                }
+        HStack {
+            if accessibilityDifferentiateWithoutColor {
+                Image(systemName: "checkmark.circle")
             }
+            
+            Text("Success")
+        }
+        .padding()
+        .background(accessibilityDifferentiateWithoutColor ? .black : .green)
+        .foregroundStyle(.white)
+        .clipShape(.capsule)
     }
 }
 

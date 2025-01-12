@@ -8,20 +8,14 @@
 import SwiftUI
 
 struct ContentView: View {
-    @Environment(\.accessibilityReduceMotion) var accessibilityReduceMotion
-    @State private var scale = 1.0
+    @Environment(\.accessibilityReduceTransparency) var accessibilityReduceTransparency
     
     var body: some View {
-        Button("Hello, world!") {
-            if accessibilityReduceMotion {
-                scale *= 1.5
-            } else {
-                withAnimation {
-                    scale *= 1.5
-                }
-            }
-        }
-        .scaleEffect(scale)
+        Text("Hello, world!")
+            .padding()
+            .background(accessibilityReduceTransparency ? .black : .black.opacity(0.5))
+            .foregroundStyle(.white)
+            .clipShape(.capsule)
     }
 }
 

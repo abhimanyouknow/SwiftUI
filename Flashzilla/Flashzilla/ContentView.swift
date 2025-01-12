@@ -8,19 +8,22 @@
 import SwiftUI
 
 struct ContentView: View {
-    let timer = Timer.publish(every: 1, tolerance: 0.5, on: .main, in: .common).autoconnect()
-    @State private var counter = 0
+    // step 1 - new property to watch the environemnt value scenePhase
+    @Environment(\.scenePhase) var scenePhase
     
     var body: some View {
         Text("Hello, world!")
-            .onReceive(timer) { time in
-                if counter == 5 {
-                    timer.upstream.connect().cancel()
-                } else {
-                    print("The time is now: \(time)")
+            /* step 2 - using an .onChange() modifier to watch when the
+             scenePhase is changing */
+            .onChange(of: scenePhase) { oldPhase, newPhase in
+                // step 3 - responding to that scenePhase somehow
+                if newPhase == .active {
+                    print("Active")
+                } else if newPhase == .inactive {
+                    print("Inactive")
+                } else if newPhase == .background {
+                    print("Background")
                 }
-                
-                counter += 1
             }
     }
 }

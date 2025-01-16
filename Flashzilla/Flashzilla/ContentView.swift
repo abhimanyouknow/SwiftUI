@@ -43,15 +43,24 @@ struct ContentView: View {
                     .clipShape(.capsule)
                 
                 ZStack {
-                    ForEach(0..<cards.count, id: \.self) { index in
-                        CardView(card: cards[index]) {
-                            withAnimation {
-                                removeCard(at: index)
+                    // challenge 3 - part 3
+                    ForEach(cards) { card in
+                        CardView(card: card) { isCorrect in
+                            if !isCorrect {
+                                withAnimation {
+                                    let newCard = Card(id: UUID(), prompt: card.prompt, answer: card.answer)
+                                    cards.remove(at: getIndex(of: card))
+                                    cards.insert(newCard, at: 0)
+                                }
+                            } else {
+                                withAnimation {
+                                    removeCard(at: getIndex(of: card))
+                                }
                             }
                         }
-                        .stacked(at: index, in: cards.count)
-                        .allowsHitTesting(index == cards.count - 1)
-                        .accessibilityHidden(index < cards.count - 1)
+                        .stacked(at: getIndex(of: card), in: cards.count)
+                        .allowsHitTesting(getIndex(of: card) == cards.count - 1)
+                        .accessibilityHidden(getIndex(of: card) < cards.count - 1)
                     }
                 }
                 .allowsHitTesting(timeRemaining > 0)
@@ -166,6 +175,17 @@ struct ContentView: View {
                 cards = decoded
             }
         }
+    }
+    
+    // challenge 3 - part 2
+    func getIndex(of card: Card) -> Int {
+        for i in 0...cards.count {
+            if cards[i].id == card.id {
+                return i
+            }
+        }
+        
+        return -1
     }
 }
 

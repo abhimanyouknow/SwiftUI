@@ -31,7 +31,8 @@ struct CardView: View {
     @State private var isDragging = false
     
     let card: Card
-    var removal: (() -> Void)? = nil
+    // challenge 3 - part 4
+    var removal: ((Bool) -> Void)? = nil
     
     var body: some View {
         ZStack {
@@ -83,7 +84,8 @@ struct CardView: View {
                     // challenge 2 - part 3
                     isDragging = false
                     if abs(offset.width) > 100 {
-                        removal?()
+                        // challenge 3 - part 5
+                        removal?(offset.width > 0)
                     } else {
                         offset = .zero
                     }

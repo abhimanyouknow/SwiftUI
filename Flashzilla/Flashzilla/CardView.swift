@@ -7,12 +7,28 @@
 
 import SwiftUI
 
+// challenge 2 - part 4
+extension View {
+    func cardBackground(offset: CGSize, isDragging: Bool) -> some View {
+        self.background(
+            RoundedRectangle(cornerRadius: 25)
+                .fill(
+                    isDragging
+                    ? offset.width > 0 ? .green : .red
+                    : .white
+                )
+        )
+    }
+}
+
 struct CardView: View {
     @Environment(\.accessibilityDifferentiateWithoutColor) var accessibilityDifferentiateWithoutColor
     @Environment(\.accessibilityVoiceOverEnabled) var accessibilityVoiceOverEnabled
     
     @State private var offset = CGSize.zero
     @State private var isShowingAnswer = false
+    // challenge 2 - part 1
+    @State private var isDragging = false
     
     let card: Card
     var removal: (() -> Void)? = nil
@@ -26,12 +42,8 @@ struct CardView: View {
                     : .white
                         .opacity(1 - Double(abs(offset.width / 50)))
                 )
-                .background(
-                    accessibilityDifferentiateWithoutColor
-                    ? nil
-                    : RoundedRectangle(cornerRadius: 25)
-                        .fill(offset.width > 0 ? .green : .red)
-                )
+                // challenge 2 - part 5
+                .cardBackground(offset: offset, isDragging: isDragging)
                 .shadow(radius: 10)
             
             VStack {
@@ -63,9 +75,13 @@ struct CardView: View {
         .gesture(
             DragGesture()
                 .onChanged { gesture in
+                    // challenge 2 - part 2
+                    isDragging = true
                     offset = gesture.translation
                 }
                 .onEnded { _ in
+                    // challenge 2 - part 3
+                    isDragging = false
                     if abs(offset.width) > 100 {
                         removal?()
                     } else {

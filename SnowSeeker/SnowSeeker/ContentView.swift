@@ -7,21 +7,33 @@
 
 import SwiftUI
 
-struct User: Identifiable {
-    var id = "J. Cole"
+struct UserView: View {
+    var body: some View {
+        Group {
+            Text("Name: Abhimanyu")
+            Text("Country: India")
+            Text("Pets: Mitthu")
+        }
+        .font(.title)
+    }
 }
 
 struct ContentView: View {
-    @State private var selectedUser: User? = nil
+    @State private var layoutVertically = false
     
     var body: some View {
-        Button("Tap me") {
-            selectedUser = User()
-        }
-        .sheet(item: $selectedUser) { user in
-            // 'user' is the unwrapped value when it exists
-            Text(user.id)
-                .presentationDetents([.medium, .large])
+        Button {
+            layoutVertically.toggle()
+        } label: {
+            if layoutVertically {
+                VStack {
+                    UserView()
+                }
+            } else {
+                HStack {
+                    UserView()
+                }
+            }
         }
     }
 }

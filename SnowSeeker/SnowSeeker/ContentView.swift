@@ -7,29 +7,14 @@
 
 import SwiftUI
 
-struct UserView: View {
-    var body: some View {
-        Group {
-            Text("Name: Abhimanyu")
-            Text("Country: India")
-            Text("Pets: Mitthu")
-        }
-        .font(.title)
-    }
-}
-
 struct ContentView: View {
-    @Environment(\.horizontalSizeClass) var horizontalSizeClass
-    
     var body: some View {
-        if horizontalSizeClass == .compact {
-            VStack {
-                UserView()
-            }
-        } else {
-            HStack {
-                UserView()
-            }
+        ViewThatFits {
+            Rectangle()
+                .frame(width: 500, height: 200)
+            
+            Circle()
+                .frame(width: 200, height: 200)
         }
     }
 }

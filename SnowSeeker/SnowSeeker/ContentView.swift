@@ -13,15 +13,15 @@ struct User: Identifiable {
 
 struct ContentView: View {
     @State private var selectedUser: User? = nil
-    @State private var isShowingUser = false
     
     var body: some View {
         Button("Tap me") {
             selectedUser = User()
-            isShowingUser = true
         }
-        .alert("Welcome", isPresented: $isShowingUser, presenting: selectedUser) { user in
-            Button(user.id) { }
+        .sheet(item: $selectedUser) { user in
+            // 'user' is the unwrapped value when it exists
+            Text(user.id)
+                .presentationDetents([.medium, .large])
         }
     }
 }

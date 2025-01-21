@@ -7,16 +7,21 @@
 
 import SwiftUI
 
+struct User: Identifiable {
+    var id = "J. Cole"
+}
+
 struct ContentView: View {
+    @State private var selectedUser: User? = nil
+    
     var body: some View {
-        NavigationSplitView(preferredCompactColumn: .constant(.detail)) {
-            NavigationLink("Primary") {
-                Text("New view")
-            }
-        } detail: {
-            Text("Content")
+        Button("Tap me") {
+            selectedUser = User()
         }
-        .navigationSplitViewStyle(.balanced)
+        .sheet(item: $selectedUser) { user in
+            // 'user' is the unwrapped value when it exists
+            Text(user.id)
+        }
     }
 }
 

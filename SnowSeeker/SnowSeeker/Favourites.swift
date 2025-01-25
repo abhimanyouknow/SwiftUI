@@ -13,8 +13,16 @@ class Favourites {
     private let key = "Favourites"
     
     init() {
-        // load our saved data
-        resorts = []
+        // challenge 2 - part 1
+        if let data = UserDefaults.standard.data(forKey: key) {
+            if let decoded = try? JSONDecoder().decode(Set<String>.self, from: data) {
+                self.resorts = decoded
+                return
+            }
+        }
+        
+        // if unable to decode, return empty array
+        self.resorts = []
     }
     
     func contains(_ resort: Resort) -> Bool {
@@ -32,6 +40,11 @@ class Favourites {
     }
     
     func save() {
-        // write out all data
+        // challenge 2 - part 2
+        if let resortsData = try? JSONEncoder().encode(resorts) {
+            UserDefaults.standard.set(resortsData, forKey: key)
+        } else {
+            fatalError("Unable to save data")
+        }
     }
 }
